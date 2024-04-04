@@ -1,5 +1,5 @@
 const Binance = require('./binance')
-
+const allowedSymbols = ['BTCUSDT','ETHUSDT','SOLUSDT']
 class UDFError extends Error { }
 class SymbolNotFound extends UDFError { }
 class InvalidResolution extends UDFError { }
@@ -31,7 +31,7 @@ class UDF {
         })
         this.symbols = promise.then(info => {
             return info.symbols
-            .filter(symbol => ['ETHBTC'].includes(symbol.symbol))
+            .filter(symbol => allowedSymbols.includes(symbol.symbol))
             .map(symbol => {
                 return {
                     symbol: symbol.symbol,
@@ -61,7 +61,7 @@ class UDF {
         this.allSymbols = promise.then(info => {
             let set = new Set()
             for (const symbol of info.symbols) {
-                if (['ETHBTC'].includes(symbol.symbol)) {
+                if (allowedSymbols.includes(symbol.symbol)) {
                 set.add(symbol.symbol)
             }
             }
@@ -170,10 +170,12 @@ class UDF {
         if (exchange) {
             symbols = symbols.filter(s => s.exchange === exchange)
         }
-
-        query = query.toUpperCase()
-        symbols = symbols.filter(s => s.symbol.indexOf(query) >= 0)
-
+    
+        if (query) {
+            query = query.toUpperCase()
+            symbols = symbols.filter(s => s.symbol.indexOf(query) >= 0)
+        }
+    
         if (limit) {
             symbols = symbols.slice(0, limit)
         }
