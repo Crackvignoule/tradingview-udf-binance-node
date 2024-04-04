@@ -30,7 +30,9 @@ class UDF {
             }, 1000)
         })
         this.symbols = promise.then(info => {
-            return info.symbols.map(symbol => {
+            return info.symbols
+            .filter(symbol => ['ETHBTC'].includes(symbol.symbol))
+            .map(symbol => {
                 return {
                     symbol: symbol.symbol,
                     ticker: symbol.symbol,
@@ -59,7 +61,9 @@ class UDF {
         this.allSymbols = promise.then(info => {
             let set = new Set()
             for (const symbol of info.symbols) {
+                if (['ETHBTC'].includes(symbol.symbol)) {
                 set.add(symbol.symbol)
+            }
             }
             return set
         })
